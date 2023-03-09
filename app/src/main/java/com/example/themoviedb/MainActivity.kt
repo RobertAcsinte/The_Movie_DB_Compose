@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color.Magenta
                 ) {
-                    MovieApp(context = applicationContext)
+                    MovieApp()
                     //Login()
                     //AccountInfo()
                 }

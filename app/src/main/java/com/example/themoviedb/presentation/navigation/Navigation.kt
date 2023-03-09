@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.themoviedb.presentation.Login
 import com.example.themoviedb.presentation.account_screen.AccountInfo
+import com.example.themoviedb.presentation.home_screen.HomeScreen
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,7 +24,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 fun MovieApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    @ApplicationContext context: Context
 ){
 
     Scaffold(
@@ -34,24 +34,21 @@ fun MovieApp(
 //            )
 //        }
     ) { innerPadding ->
-        var startScreen = Screen.LoginScreen.route
-        val sharedPreference =  context.getSharedPreferences("PREFERENCE_SESSION", Context.MODE_PRIVATE)
-        val sessionId = sharedPreference.getString("SESSION_ID", "")
-        if(sessionId != ""){
-            startScreen = Screen.AccountScreen.route
-        }
+
+
         NavHost(
             navController = navController,
-            startDestination = startScreen,
+            startDestination = Screen.HomeScreen.route,
             modifier = modifier.padding(innerPadding)
         ){
             composable(Screen.LoginScreen.route) {
                 Login() {
-                    navController.navigate(Screen.AccountScreen.route) {
-                        popUpTo(Screen.LoginScreen.route) {
-                            inclusive = true
-                        }
-                    }
+                    navController.navigateUp()
+                }
+            }
+            composable(Screen.HomeScreen.route) {
+                HomeScreen() {
+                    navController.navigate(Screen.LoginScreen.route)
                 }
             }
             composable(Screen.AccountScreen.route) {

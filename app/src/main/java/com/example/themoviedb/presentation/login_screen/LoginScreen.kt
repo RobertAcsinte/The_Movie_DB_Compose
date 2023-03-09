@@ -13,8 +13,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.themoviedb.presentation.account_screen.AccountInfoViewModel
-import com.example.themoviedb.presentation.login_screen.LoginState
 import com.example.themoviedb.presentation.login_screen.LoginViewModel
 import com.example.themoviedb.ui.theme.ErrorColorDark
 
@@ -23,7 +21,7 @@ import com.example.themoviedb.ui.theme.ErrorColorDark
 @Composable
 fun Login(
     viewModel: LoginViewModel = hiltViewModel(),
-    onLoginButtonClicked: () -> Unit
+    navigateHome: () -> Unit
 ){
     var username by rememberSaveable{ mutableStateOf("") }
     var password by rememberSaveable{ mutableStateOf("") }
@@ -63,7 +61,6 @@ fun Login(
             Button(
                 onClick = {
                     viewModel.login(username, password)
-//                    onLoginButtonClicked()
                 }
             ) {
                 Text("Login")
@@ -72,8 +69,8 @@ fun Login(
         Spacer(modifier = Modifier.size(16.dp))
 
         state.sessionId?.let {
-            LaunchedEffect(Unit){
-                onLoginButtonClicked()
+            LaunchedEffect(state){
+                navigateHome()
             }
         }
         state.error?.let {

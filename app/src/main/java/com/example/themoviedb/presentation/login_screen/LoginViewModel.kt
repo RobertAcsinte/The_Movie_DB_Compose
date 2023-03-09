@@ -27,16 +27,6 @@ class LoginViewModel @Inject constructor(
     private val sharedPreference =  context.getSharedPreferences("PREFERENCE_SESSION", Context.MODE_PRIVATE)
     private var editor = sharedPreference.edit()
 
-    init {
-        checkLogin()
-    }
-
-    private fun checkLogin(){
-        val sessionId = sharedPreference.getString("SESSION_ID", "")
-        if(sessionId != ""){
-            _loginState.value = _loginState.value.copy(sessionId = sessionId)
-        }
-    }
 
     fun login(username: String, password: String){
         viewModelScope.launch {
