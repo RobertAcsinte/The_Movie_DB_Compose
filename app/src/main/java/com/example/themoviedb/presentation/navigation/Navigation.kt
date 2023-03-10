@@ -43,13 +43,25 @@ fun MovieApp(
         ){
             composable(Screen.LoginScreen.route) {
                 Login() {
-                    navController.navigateUp()
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+//                    navController.navigateUp()
                 }
             }
             composable(Screen.HomeScreen.route) {
                 HomeScreen() {
-                    navController.navigate(Screen.LoginScreen.route)
+                    navController.navigate(Screen.LoginScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
+//                HomeScreen() {
+//                    navController.navigate(Screen.LoginScreen.route)
+//                }
             }
             composable(Screen.AccountScreen.route) {
                 AccountInfo()

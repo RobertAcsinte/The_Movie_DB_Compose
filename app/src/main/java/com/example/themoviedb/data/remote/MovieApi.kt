@@ -2,6 +2,7 @@ package com.example.themoviedb.data.remote
 
 import com.example.themoviedb.data.remote.dto.RequestToken
 import com.example.themoviedb.data.remote.dto.SessionId
+import com.example.themoviedb.data.remote.dto.SessionIdGuest
 import com.example.themoviedb.data.remote.dto.User
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -26,6 +27,11 @@ interface MovieApi {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("request_token") requestToken: String
     ): SessionId
+
+    @GET("authentication/guest_session/new")
+    suspend fun requestSessionGuest(
+        @Query("api_key") apiKey: String = API_KEY,
+    ): SessionIdGuest
 
     @GET("account")
     suspend fun getAccountInfo(

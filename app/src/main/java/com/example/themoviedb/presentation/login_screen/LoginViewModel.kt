@@ -34,10 +34,31 @@ class LoginViewModel @Inject constructor(
                 when(it) {
                     is Resource.Success -> {
                         editor.putString("SESSION_ID", it.data?.sessionId).apply()
-                        _loginState.value = _loginState.value.copy(sessionId = sharedPreference.getString("SESSION_ID", ""), error = null)
+                        editor.putString("SESSION_ID_GUEST", null).apply()
+                        _loginState.value = _loginState.value.copy(sessionId = sharedPreference.getString("SESSION_ID", null), error = null)
                     }
                     is Resource.Error -> {
                         _loginState.value = _loginState.value.copy(error = it.data?.statusMessage)
+                    }
+                    is Resource.Loading -> {
+                        _loginState.value = _loginState.value.copy(isLoading = it.isLoading)
+                    }
+                }
+            }
+        }
+    }
+
+    fun loginGuest(){
+        viewModelScope.launch {
+            repository.loginGuest().collect() {
+                when(it) {
+                    is Resource.Success -> {
+                        editor.putString("SESSION_ID", null).apply()
+                        editor.putString("SESSION_ID_GUEST", it.data?.sessionIdGuest).apply()
+                        _loginState.value = _loginState.value.copy(sessionId = sharedPreference.getString("SESSION_ID_GUEST", ""), error = null)
+                    }
+                    is Resource.Error -> {
+                        _loginState.value = _loginState.value.copy(error = it.message)
                     }
                     is Resource.Loading -> {
                         _loginState.value = _loginState.value.copy(isLoading = it.isLoading)
