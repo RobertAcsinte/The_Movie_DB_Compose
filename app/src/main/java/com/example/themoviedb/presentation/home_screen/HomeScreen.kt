@@ -26,11 +26,6 @@ fun HomeScreen(
 ) {
     val viewState by viewModel.viewState.collectAsState()
 
-
-    println("sloboz " + viewState)
-
-
-
     when (viewState) {
         ViewState.Loading -> {
             Box(modifier = Modifier
@@ -42,8 +37,10 @@ fun HomeScreen(
             }
         }
         ViewState.NotLoggedIn -> {
-            LaunchedEffect(viewState == ViewState.NotLoggedIn) {
-                onNavigateToLoginScreen()
+            LaunchedEffect(viewState) {
+                if(viewState == ViewState.NotLoggedIn){
+                    onNavigateToLoginScreen()
+                }
             }
         }
         ViewState.LoggedIn -> {

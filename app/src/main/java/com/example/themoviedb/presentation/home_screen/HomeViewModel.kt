@@ -32,7 +32,8 @@ class HomeViewModel @Inject constructor(
         if(it != ""){
             ViewState.LoggedIn
         }
-        else{ ViewState.NotLoggedIn
+        else{
+            ViewState.NotLoggedIn
         }
     }.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), initialValue = ViewState.Loading)
 

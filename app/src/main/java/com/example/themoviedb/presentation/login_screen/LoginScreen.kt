@@ -15,6 +15,9 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalFocusManager
@@ -25,6 +28,9 @@ import androidx.compose.ui.text.TextStyle
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +51,8 @@ fun Login(
 ){
     var username by rememberSaveable{ mutableStateOf("") }
     var password by rememberSaveable{ mutableStateOf("") }
+    var showPassword by remember { mutableStateOf(value = false) }
+
     val state by viewModel.loginState.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
@@ -101,10 +109,33 @@ fun Login(
                         }
                     }
                 },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            visualTransformation = if (showPassword) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Password),
             keyboardActions = KeyboardActions(
                 onDone = {focusManager.clearFocus()}
             ),
+            trailingIcon = {
+                if (showPassword) {
+                    IconButton(onClick = { showPassword = false }) {
+                        Icon(
+                            imageVector = Icons.Filled.Visibility,
+                            contentDescription = "hide_password"
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = { showPassword = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.VisibilityOff,
+                            contentDescription = "hide_password"
+                        )
+                    }
+                }
+            },
             label = { Text(stringResource(id = R.string.password)) },
             value = password,
             onValueChange = {password = it})
@@ -120,7 +151,9 @@ fun Login(
             }
             Spacer(modifier = Modifier.size(16.dp))
             ClickableText(
-                modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
+                modifier = Modifier
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .padding(bottom = 16.dp),
                 text = AnnotatedString(
                     stringResource(id = R.string.guest)
                 ),
@@ -140,6 +173,9 @@ fun Login(
         }
         state.error?.let {
             Text(
+                modifier = Modifier
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .padding(bottom = 16.dp),
                 text = it,
                 textAlign = TextAlign.Center,
                 color = ErrorColorDark,
