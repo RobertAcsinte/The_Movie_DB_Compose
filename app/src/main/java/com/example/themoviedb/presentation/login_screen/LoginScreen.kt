@@ -61,21 +61,21 @@ fun Login(
 
     Column(
         modifier = Modifier
-            .padding(top = 64.dp)
+            .padding(top = 8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.align(Alignment.CenterHorizontally)){
             Image(
+                modifier = Modifier.size(250.dp),
                 painter = painterResource(id = R.drawable.logo),
-                contentDescription = ""
+                contentDescription = "",
             )
         }
         Text(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+                .fillMaxWidth(),
             text = stringResource(id = R.string.app_name),
             textAlign = TextAlign.Center,
             color = Color.White,

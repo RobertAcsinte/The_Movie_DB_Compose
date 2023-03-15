@@ -28,36 +28,17 @@ fun TrendingScreen(
     navigate: () -> Unit
 ) {
     val state by viewModel.trendingState.collectAsState()
-
     val trendingPagination = viewModel.trendingPagingList.collectAsLazyPagingItems()
-
     val statePag =   trendingPagination.loadState.refresh
-//    LazyColumn() {
-//        items(
-//            items = trendingPagination,
-//            key = null
-//        ) { movie ->
-//            Text(
-//                modifier = Modifier
-//                    .height(75.dp),
-//                text = movie?.name ?: "",
-//            )
-//
-//            Divider()
-//        }
-//    }
 
     LazyColumn() {
         items(
             items = trendingPagination,
             key = null
         ) { movie ->
-            Text(
-                modifier = Modifier
-                    .height(75.dp),
-                text = movie?.name ?: "",
-            )
-            Divider()
+            if (movie != null) {
+                TrendingItem(title = movie.name)
+            }
         }
     }
 
@@ -93,7 +74,7 @@ fun TrendingScreen(
                     modifier = Modifier
                         .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Bottom,
                 ) {
                     Text(
                         modifier = Modifier
@@ -109,7 +90,7 @@ fun TrendingScreen(
                         .fillMaxSize()
                         .background(Color.Red),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Bottom,
                 ) {
                     state.error.message?.let {
                         Text(
@@ -133,12 +114,4 @@ fun TrendingScreen(
         Text("Go account")
     }
 
-    state.trending?.let {
-//        LazyColumn {
-//            items(items = it.results, itemContent = { item ->
-//                Text(item.name)
-//            })
-//        }
-
-    }
 }
