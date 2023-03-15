@@ -3,6 +3,8 @@ package com.example.themoviedb.presentation.trending_screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -12,13 +14,22 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
 import com.example.themoviedb.R
 
 
@@ -31,13 +42,32 @@ fun TrendingScreen(
     val trendingPagination = viewModel.trendingPagingList.collectAsLazyPagingItems()
     val statePag =   trendingPagination.loadState.refresh
 
+
+
+
+
+//    SubcomposeAsyncImage(
+//        model = ImageRequest.Builder(LocalContext.current)
+//            .data("https://image.tmdb.org/t/p/original/e4V77sv2MvSbGyViKTXDsgR3fl4.jpg")
+//            .crossfade(true)
+//            .build(),
+//        contentDescription = stringResource(R.string.login)
+//    ) {
+//        val state = painter.state
+//        if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+//            CircularProgressIndicator()
+//        } else {
+//            SubcomposeAsyncImageContent()
+//        }
+//    }
+
     LazyColumn() {
         items(
             items = trendingPagination,
             key = null
         ) { movie ->
             if (movie != null) {
-                TrendingItem(title = movie.name)
+                TrendingItem(title = movie.name, posterPath = movie.posterPath, backgroundPath = movie.backdropPath)
             }
         }
     }
