@@ -1,11 +1,11 @@
 package com.example.themoviedb.data.repository
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import com.example.themoviedb.data.remote.MovieApi
-import com.example.themoviedb.data.remote.dto.RequestToken
-import com.example.themoviedb.data.remote.dto.SessionId
-import com.example.themoviedb.data.remote.dto.SessionIdGuest
-import com.example.themoviedb.data.remote.dto.User
+import com.example.themoviedb.data.remote.dto.*
+import com.example.themoviedb.data.remote.paging.TrendingPagingSource
 import com.example.themoviedb.domain.repository.MovieRepository
 import com.example.themoviedb.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Singleton
 class MovieRepositoryImpl @Inject constructor(
-    private val api: MovieApi,
+    val api: MovieApi,
 ): MovieRepository {
 
     override fun getUser(sessionId: String): Flow<Resource<User>> {
@@ -68,6 +68,23 @@ class MovieRepositoryImpl @Inject constructor(
             try {
                 val sessionIdGuestResponse = api.requestSessionGuest()
                 emit(Resource.Success(sessionIdGuestResponse))
+            } catch(e: IOException) {
+                emit(Resource.Error(message = e.localizedMessage))
+            } catch(e: HttpException) {
+                emit(Resource.Error(e.localizedMessage))
+            }
+            finally {
+                emit(Resource.Loading(false))
+            }
+        }
+    }
+
+    override suspend fun getTrending(): Flow<Resource<Trending>> {
+        return flow {
+            emit(Resource.Loading(true))
+            try {
+                val trending = api.getTrending()
+                emit(Resource.Success(trending))
             } catch(e: IOException) {
                 emit(Resource.Error(message = e.localizedMessage))
             } catch(e: HttpException) {

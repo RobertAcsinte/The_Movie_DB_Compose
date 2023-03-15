@@ -1,9 +1,6 @@
 package com.example.themoviedb.data.remote
 
-import com.example.themoviedb.data.remote.dto.RequestToken
-import com.example.themoviedb.data.remote.dto.SessionId
-import com.example.themoviedb.data.remote.dto.SessionIdGuest
-import com.example.themoviedb.data.remote.dto.User
+import com.example.themoviedb.data.remote.dto.*
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -38,6 +35,17 @@ interface MovieApi {
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") sessionId: String
     ): User
+
+    @GET("trending/all/day")
+    suspend fun getTrending(
+        @Query("api_key") apiKey: String = API_KEY
+    ): Trending
+
+    @GET("trending/all/day")
+    suspend fun getTrendingPagination(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("page") page: Int
+    ): Trending
 
     companion object {
         const val API_KEY = "c3decbd1e9df2262cba9028dbd8ee270"

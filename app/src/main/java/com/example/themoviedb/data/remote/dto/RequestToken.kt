@@ -1,14 +1,13 @@
 package com.example.themoviedb.data.remote.dto
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 
 data class RequestToken(
-    @field:Json(name = "success")
     val success: Boolean,
-    @field:Json(name = "request_token")
+    @SerializedName("request_token")
     val requestToken: String?,
-    @field:Json(name = "status_message")
+    @SerializedName("status_message")
     val statusMessage: String?
 )
 

@@ -1,13 +1,12 @@
 package com.example.themoviedb.data.remote.dto
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 
 data class SessionId(
-    @field:Json(name = "success")
     val success: Boolean,
-    @field:Json(name = "session_id")
+    @SerializedName("session_id")
     val sessionId: String?,
-    @field:Json(name = "status_message")
+    @SerializedName("status_message")
     val statusMessage: String?
 )

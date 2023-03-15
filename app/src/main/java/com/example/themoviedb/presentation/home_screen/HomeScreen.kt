@@ -17,12 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.themoviedb.presentation.account_screen.AccountInfo
+import com.example.themoviedb.presentation.trending_screen.TrendingScreen
 
 
 @Composable
 fun HomeScreen(
     viewModel:HomeViewModel = hiltViewModel(),
-    onNavigateToLoginScreen: () -> Unit = {}
+    onNavigateToLoginScreen: () -> Unit,
+    navigate: () -> Unit
 ) {
     val viewState by viewModel.viewState.collectAsState()
 
@@ -44,7 +46,10 @@ fun HomeScreen(
             }
         }
         ViewState.LoggedIn -> {
-            AccountInfo()
+            //AccountInfo()
+            TrendingScreen() {
+                navigate()
+            }
         }
     }
 }
