@@ -5,34 +5,26 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
-import coil.request.ImageRequest
-import com.example.themoviedb.R
 
 
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TrendingScreen(
     viewModel: TrendingViewModel = hiltViewModel(),
@@ -40,47 +32,28 @@ fun TrendingScreen(
 ) {
     val state by viewModel.trendingState.collectAsState()
     val trendingPagination = viewModel.trendingPagingList.collectAsLazyPagingItems()
-    val statePag =   trendingPagination.loadState.refresh
+    val statePag = trendingPagination.loadState.refresh
+    val pullRefreshState = rememberPullRefreshState(refreshing = statePag is LoadState.Loading, { trendingPagination.refresh()})
 
 
 
-
-
-//    SubcomposeAsyncImage(
-//        model = ImageRequest.Builder(LocalContext.current)
-//            .data("https://image.tmdb.org/t/p/original/e4V77sv2MvSbGyViKTXDsgR3fl4.jpg")
-//            .crossfade(true)
-//            .build(),
-//        contentDescription = stringResource(R.string.login)
-//    ) {
-//        val state = painter.state
-//        if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-//            CircularProgressIndicator()
-//        } else {
-//            SubcomposeAsyncImageContent()
-//        }
-//    }
-
-    LazyColumn() {
-        items(
-            items = trendingPagination,
-            key = null
-        ) { movie ->
-            if (movie != null) {
-                TrendingItem(title = movie.name, posterPath = movie.posterPath, backgroundPath = movie.backdropPath)
+    Box(Modifier.pullRefresh(pullRefreshState).fillMaxSize()){
+        LazyColumn {
+            items(
+                items = trendingPagination,
+                key = null
+            ) { movie ->
+                if (movie != null) {
+                    TrendingItem(title = movie.name, posterPath = movie.posterPath, backgroundPath = movie.backdropPath)
+                }
             }
         }
+        PullRefreshIndicator(statePag is LoadState.Loading, pullRefreshState, Modifier.align(Alignment.TopCenter))
     }
 
 
         when(statePag) {
             is LoadState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ){
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
             }
             is LoadState.Error -> {
                 statePag.error.message?.let {
@@ -95,30 +68,15 @@ fun TrendingScreen(
                 }
             }
             is LoadState.NotLoading -> {
-
             }
         }
         when(val state = trendingPagination.loadState.append) {
             is LoadState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom,
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(8.dp),
-                        text = stringResource(id = R.string.loading_data)
-                    )
-                    CircularProgressIndicator()
-                }
             }
             is LoadState.Error -> {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Red),
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom,
                 ) {
@@ -133,15 +91,12 @@ fun TrendingScreen(
                 }
             }
             is LoadState.NotLoading -> {
-
             }
         }
-
 
     Button(
         onClick =  navigate
     ) {
         Text("Go account")
     }
-
 }

@@ -37,10 +37,10 @@ class TrendingViewModel @Inject constructor(
     ).flow.cachedIn(viewModelScope)
 
     init {
-        getTrending()
+        //getTrending()
     }
 
-    private fun getTrending(){
+    fun getTrending(){
         viewModelScope.launch {
             repository.getTrending().collect {
                 when(it){
