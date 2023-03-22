@@ -1,9 +1,9 @@
 package com.example.themoviedb.presentation.account_screen
 
-import com.example.themoviedb.data.remote.dto.User
+import com.example.themoviedb.data.remote.dto.UserResponse
 
 data class AccountInfoState(
-    val account: User? = null,
+    val account: UserResponse? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
 )

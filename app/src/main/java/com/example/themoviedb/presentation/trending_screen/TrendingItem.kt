@@ -46,7 +46,7 @@ fun TrendingItem(title: String, posterPath: String?, backgroundPath: String?){
                 modifier = Modifier
                     .fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://image.tmdb.org/t/p/original$backgroundPath")
+                    .data("https://image.tmdb.org/t/p/w780$backgroundPath")
                     .crossfade(true)
                     .build(),
                 contentDescription = stringResource(R.string.login),
@@ -93,7 +93,7 @@ fun TrendingItem(title: String, posterPath: String?, backgroundPath: String?){
                         .weight(3.5f)
                         .clip(RoundedCornerShape(10.dp)),
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://image.tmdb.org/t/p/original$posterPath")
+                        .data("https://image.tmdb.org/t/p/w342$posterPath")
                         .crossfade(true)
                         .build(),
                     contentDescription = stringResource(R.string.login),

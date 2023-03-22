@@ -3,7 +3,7 @@ package com.example.themoviedb.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 
-data class SessionId(
+data class SessionIdResponse(
     val success: Boolean,
     @SerializedName("session_id")
     val sessionId: String?,

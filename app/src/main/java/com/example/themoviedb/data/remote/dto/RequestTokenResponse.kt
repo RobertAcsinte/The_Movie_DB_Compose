@@ -3,7 +3,7 @@ package com.example.themoviedb.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 
-data class RequestToken(
+data class RequestTokenResponse(
     val success: Boolean,
     @SerializedName("request_token")
     val requestToken: String?,

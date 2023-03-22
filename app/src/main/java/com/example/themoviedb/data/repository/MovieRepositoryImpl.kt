@@ -1,15 +1,15 @@
 package com.example.themoviedb.data.repository
 
-import android.util.Log
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
+import com.example.themoviedb.data.local.TrendingDatabase
+import com.example.themoviedb.data.mapper.toTrendingMovieEntity
 import com.example.themoviedb.data.remote.MovieApi
 import com.example.themoviedb.data.remote.dto.*
-import com.example.themoviedb.data.remote.paging.TrendingPagingSource
 import com.example.themoviedb.domain.repository.MovieRepository
 import com.example.themoviedb.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
@@ -19,9 +19,10 @@ import javax.inject.Singleton
 @Singleton
 class MovieRepositoryImpl @Inject constructor(
     val api: MovieApi,
+    val db: TrendingDatabase
 ): MovieRepository {
 
-    override fun getUser(sessionId: String): Flow<Resource<User>> {
+    override fun getUser(sessionId: String): Flow<Resource<UserResponse>> {
         return flow {
             emit(Resource.Loading(true))
             try{
@@ -39,11 +40,11 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun login(username: String, password: String): Flow<Resource<SessionId>> {
+    override suspend fun login(username: String, password: String): Flow<Resource<SessionIdResponse>> {
         return flow {
             emit(Resource.Loading(true))
-            val requestTokenResponse: RequestToken
-            val sessionIdResponse: SessionId?
+            val requestTokenResponse: RequestTokenResponse
+            val sessionIdResponse: SessionIdResponse?
             try{
                 requestTokenResponse = api.requestToken()
                 requestTokenResponse.requestToken?.let { api.approveToken(username = username, password = password, requestToken = it) }
@@ -54,7 +55,7 @@ class MovieRepositoryImpl @Inject constructor(
             } catch(e: HttpException) {
                 var responseBody = e.response()?.errorBody()?.string()
                 val statusMessage = JSONObject(responseBody).getString("status_message")
-                emit(Resource.Error(message = e.localizedMessage, data = SessionId(success = false, sessionId = null, statusMessage = statusMessage)))
+                emit(Resource.Error(message = e.localizedMessage, data = SessionIdResponse(success = false, sessionId = null, statusMessage = statusMessage)))
             }
             finally {
                 emit(Resource.Loading(false))
@@ -62,7 +63,7 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun loginGuest(): Flow<Resource<SessionIdGuest>> {
+    override suspend fun loginGuest(): Flow<Resource<SessionIdGuestResponse>> {
         return flow {
             emit(Resource.Loading(true))
             try {
@@ -79,12 +80,27 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTrending(): Flow<Resource<Trending>> {
+    override suspend fun getTrending(): Flow<Resource<MovieResponse>> {
         return flow {
+            var id = 0
             emit(Resource.Loading(true))
             try {
                 val trending = api.getTrending()
                 emit(Resource.Success(trending))
+                val trendingDao = trending.results.map {
+                    it.toTrendingMovieEntity()
+                }
+                trendingDao.map {
+                    it.page = trending.page
+                    it.fetchedOrder = id
+                    id++
+                }
+                trendingDao.forEach {
+                    println("sloboz " + it.name + it.fetchedOrder)
+                }
+                withContext(Dispatchers.IO) {
+                    db.trendingMovieDao().insertAll(trendingDao)
+                }
             } catch(e: IOException) {
                 emit(Resource.Error(message = e.localizedMessage))
             } catch(e: HttpException) {
@@ -95,4 +111,27 @@ class MovieRepositoryImpl @Inject constructor(
             }
         }
     }
+
+//    override fun getTrendingDb(): Flow<Resource<List<TrendingMovieEntity>>> {
+//        return flow {
+//            emit(Resource.Loading(true))
+//            try {
+//                db.trendingMovieDao().getAll().collect() {
+//                    emit(Resource.Success(it))
+//                    emit(Resource.Loading(false))
+//                }
+//                emit(Resource.Loading(true))
+//            } catch(e: IOException) {
+//                emit(Resource.Error(message = e.localizedMessage))
+//            } catch(e: HttpException) {
+//                emit(Resource.Error(e.localizedMessage))
+//            }
+//            finally {
+//                emit(Resource.Loading(false))
+//            }
+//        }
+//    }
+
+
+
 }

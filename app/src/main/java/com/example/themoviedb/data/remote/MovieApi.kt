@@ -9,7 +9,7 @@ interface MovieApi {
     @GET("authentication/token/new")
     suspend fun requestToken(
         @Query("api_key") apiKey: String = API_KEY
-    ): RequestToken
+    ): RequestTokenResponse
 
     @GET("authentication/token/validate_with_login")
     suspend fun approveToken(
@@ -17,35 +17,35 @@ interface MovieApi {
         @Query("username") username: String,
         @Query("password") password: String,
         @Query("request_token") requestToken: String,
-    ): RequestToken
+    ): RequestTokenResponse
 
     @GET("authentication/session/new")
     suspend fun requestSession(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("request_token") requestToken: String
-    ): SessionId
+    ): SessionIdResponse
 
     @GET("authentication/guest_session/new")
     suspend fun requestSessionGuest(
         @Query("api_key") apiKey: String = API_KEY,
-    ): SessionIdGuest
+    ): SessionIdGuestResponse
 
     @GET("account")
     suspend fun getAccountInfo(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("session_id") sessionId: String
-    ): User
+    ): UserResponse
 
     @GET("trending/all/day")
     suspend fun getTrending(
         @Query("api_key") apiKey: String = API_KEY
-    ): Trending
+    ): MovieResponse
 
     @GET("trending/all/day")
     suspend fun getTrendingPagination(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("page") page: Int
-    ): Trending
+    ): MovieResponse
 
     companion object {
         const val API_KEY = "c3decbd1e9df2262cba9028dbd8ee270"

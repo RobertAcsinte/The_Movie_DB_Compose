@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.themoviedb.presentation.account_screen.AccountInfo
 import com.example.themoviedb.presentation.trending_screen.TrendingScreen
 
 
